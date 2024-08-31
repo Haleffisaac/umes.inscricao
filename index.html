@@ -7,52 +7,49 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #fbc2eb, #a6c0fe);
+            background: linear-gradient(135deg, #000000, #a6c0fe);
             display: flex;
-            justify-content: center;
-            flex-direction: row;
-            gap: 1rem;
+            flex-direction: column;
             align-items: center;
-            height: 40rem;
-            margin: 2rem;
-            /* overflow: hidden; */
-            background-image: url(https://images.pexels.com/photos/20188166/pexels-photo-20188166/free-photo-of-abstrato-resumo-abstrair-borrao.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
+            height: 100vh;
+            margin: 0;
+            /* background-image: url(https://images.pexels.com/photos/3742666/pexels-photo-3742666.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
             background-position: center center;
             background-repeat: no-repeat;
-            background-size: cover;
+            background-size: cover; */
         }
 
-        .button-adm {
-            text-decoration: none;
-            color: #a6c0fe;
-            font-weight: bold;
-        }
         form, #adminSection {
             border: 1px solid #ccc;
             padding: 20px;
             border-radius: 12px;
-            background-color: #ffffff67;
+            background-color: #00000067;
             margin-bottom: 20px;
             width: 300px;
             height: 30rem;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 80px; /* Espaço para o header fixo */
         }
+
         form:hover, #adminSection:hover {
             transform: translateY(-5px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
+
         h2 {
             color: #ffffff;
             margin-bottom: 20px;
             text-align: center;
             font-size: 1.5rem;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
             color: #ffffff;
         }
+
         input[type="text"], input[type="email"], input[type="tel"], input[type="password"] {
             width: 90%;
             padding: 10px;
@@ -61,10 +58,12 @@
             border-radius: 6px;
             transition: border-color 0.3s ease;
         }
+
         input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="password"]:focus {
             border-color: #007bff;
             outline: none;
         }
+
         button {
             padding: 12px 24px;
             border: none;
@@ -75,10 +74,12 @@
             font-size: 1rem;
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
+
         button:hover {
             background-color: #0056b3;
             transform: scale(1.05);
         }
+
         #participantList {
             display: none;
             border: 1px solid #ddd;
@@ -90,15 +91,18 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
+
         #participantList.show {
             display: block;
             opacity: 1;
             transform: scale(1);
         }
+
         #participantList.hide {
             opacity: 0;
             transform: scale(0.95);
         }
+
         .participant {
             margin-bottom: 10px;
             padding-bottom: 10px;
@@ -106,14 +110,71 @@
             color: #444;
             transition: background-color 0.3s ease;
         }
+
         .participant:hover {
             background-color: #f9f9f9;
         }
+
         .participant:last-child {
             border-bottom: none;
         }
 
-        @media (max-width:580px) {
+        #availability {
+            color: #ddd;
+            padding: 1rem;
+            background-color: #00000067;
+            border-radius: 5px;
+            font-weight: 800;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            width: 300px;
+        }
+
+        .modal-content h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .modal-content p {
+            margin: 10px 0;
+            color: #666;
+        }
+
+        .modal-content button {
+            background-color: #007bff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            color: rgb(255, 255, 255);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .modal-content button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 580px) {
             body {
                 flex-direction: column;
                 height: 76rem;
@@ -135,74 +196,117 @@
         <input type="email" id="email" name="email" required>
         
         <button type="submit">Inscrever</button>
+        
+        <p id="availability">Vagas Restantes: <span id="vacancyCount"></span></p>
     </form>
+    
     <div id="adminSection">
-        <h2>Admin</h2>
-        <label for="adminPassword">Senha do Administrador:</label>
+        <h2>Administrador?</h2>
+        <label for="adminPassword">Senha:</label>
         <input type="password" id="adminPassword">
         <button id="viewParticipantsBtn">Ver Participantes</button>
     </div>
 
     <div id="participantList" class="hide">
         <h3>Lista de Inscritos</h3>
+        <label for="search">Pesquisar:</label>
+        <input type="text" id="search" placeholder="Digite o nome...">
         <div id="participants"></div>
     </div>
 
-   
+    <!-- Modal -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h3>Inscrição Confirmada!</h3>
+            <p>Você se inscreveu com sucesso. Obrigado por participar!</p>
+            <button id="closeModalBtn">Fechar</button>
+        </div>
+    </div>
+
     <script>
         const form = document.getElementById('registrationForm');
         const participantsDiv = document.getElementById('participants');
         const participantList = document.getElementById('participantList');
         const viewParticipantsBtn = document.getElementById('viewParticipantsBtn');
         const adminPassword = document.getElementById('adminPassword');
+        const vacancyCount = document.getElementById('vacancyCount');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const searchInput = document.getElementById('search');
 
         const adminPasswordValue = "IRRUL"; // Senha do administrador
-        let registrations = [];
+        const maxVacancies = 50; // Número máximo de vagas
+        let registrations = JSON.parse(localStorage.getItem('registrations')) || [];
+        let remainingVacancies = parseInt(localStorage.getItem('remainingVacancies')) || maxVacancies;
+
+        // Atualiza o número de vagas restantes na tela
+        function updateVacancyCount() {
+            vacancyCount.textContent = remainingVacancies;
+        }
+
+        // Inicializa a página
+        updateVacancyCount();
 
         form.addEventListener('submit', function(event) {
             event.preventDefault();
             
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const email = document.getElementById('email').value;
+            if (remainingVacancies > 0) {
+                const name = document.getElementById('name').value;
+                const phone = document.getElementById('phone').value;
+                const email = document.getElementById('email').value;
+                
+                registrations.push({ name, phone, email });
+                remainingVacancies--;
+                localStorage.setItem('registrations', JSON.stringify(registrations));
+                localStorage.setItem('remainingVacancies', remainingVacancies);
+                updateVacancyCount();
+                form.reset();
 
-            const newRegistration = {
-                name: name,
-                phone: phone,
-                email: email
-            };
-
-            registrations.push(newRegistration);
-            alert('Inscrição realizada com sucesso!');
-            form.reset();
+                // Exibir modal de confirmação
+                confirmationModal.style.display = 'flex';
+            } else {
+                alert('Não há mais vagas disponíveis.');
+            }
         });
 
         viewParticipantsBtn.addEventListener('click', function() {
             if (adminPassword.value === adminPasswordValue) {
-                participantList.classList.toggle('show');
-                participantList.classList.toggle('hide');
+                // Exibir a lista de participantes
                 displayParticipants();
+                participantList.classList.add('show');
+                participantList.classList.remove('hide');
             } else {
                 alert('Senha incorreta!');
             }
         });
 
         function displayParticipants() {
-            participantsDiv.innerHTML = ''; // Limpa a lista antes de atualizar
-
-            registrations.forEach((registration, index) => {
-                const participant = document.createElement('div');
-                participant.classList.add('participant');
-                participant.innerHTML = `
-                    <strong>Inscrição ${index + 1}</strong><br>
-                    Nome: ${registration.name}<br>
-                    Celular: ${registration.phone}<br>
-                    Email: ${registration.email}
-                `;
-                participantsDiv.appendChild(participant);
+            participantsDiv.innerHTML = ''; // Limpa a lista existente
+            registrations.forEach((participant) => {
+                const div = document.createElement('div');
+                div.className = 'participant';
+                div.textContent = `Nome: ${participant.name}, Telefone: ${participant.phone}, Email: ${participant.email}`;
+                participantsDiv.appendChild(div);
             });
         }
-    </script>
 
+        // Função de pesquisa
+        searchInput.addEventListener('input', function() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const participantDivs = document.querySelectorAll('#participants .participant');
+            participantDivs.forEach(div => {
+                const text = div.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    div.style.display = '';
+                } else {
+                    div.style.display = 'none';
+                }
+            });
+        });
+
+        closeModalBtn.addEventListener('click', function() {
+            confirmationModal.style.display = 'none';
+        });
+    </script>
 </body>
 </html>

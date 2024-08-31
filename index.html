@@ -6,43 +6,118 @@
     <title>Formulário de Inscrição</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fbc2eb, #a6c0fe);
             display: flex;
             justify-content: center;
+            flex-direction: row;
+            gap: 1rem;
             align-items: center;
-            flex-direction: column;
-            height: 100vh;
-            margin: 0;
+            height: 40rem;
+            margin: 2rem;
+            /* overflow: hidden; */
+            background-image: url(https://images.pexels.com/photos/20188166/pexels-photo-20188166/free-photo-of-abstrato-resumo-abstrair-borrao.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
         }
-        form {
+
+        .button-adm {
+            text-decoration: none;
+            color: #a6c0fe;
+            font-weight: bold;
+        }
+        form, #adminSection {
             border: 1px solid #ccc;
             padding: 20px;
-            border-radius: 8px;
-            background-color: #f9f9f9;
+            border-radius: 12px;
+            background-color: #ffffff67;
             margin-bottom: 20px;
             width: 300px;
+            height: 30rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        form:hover, #adminSection:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        h2 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
         }
         label {
             display: block;
             margin-bottom: 8px;
+            color: #ffffff;
         }
-        input[type="text"], input[type="email"], input[type="tel"] {
-            width: 100%;
-            padding: 8px;
+        input[type="text"], input[type="email"], input[type="tel"], input[type="password"] {
+            width: 90%;
+            padding: 10px;
             margin-bottom: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="password"]:focus {
+            border-color: #007bff;
+            outline: none;
         }
         button {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 4px;
-            background-color: #28a745;
+            border-radius: 6px;
+            background-color: #007bff;
             color: white;
             cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
         button:hover {
-            background-color: #218838;
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        #participantList {
+            display: none;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 12px;
+            background-color: #f1f1f1;
+            margin-top: 20px;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        #participantList.show {
+            display: block;
+            opacity: 1;
+            transform: scale(1);
+        }
+        #participantList.hide {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        .participant {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            color: #444;
+            transition: background-color 0.3s ease;
+        }
+        .participant:hover {
+            background-color: #f9f9f9;
+        }
+        .participant:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width:580px) {
+            body {
+                flex-direction: column;
+                height: 76rem;
+            }
         }
     </style>
 </head>
@@ -61,10 +136,28 @@
         
         <button type="submit">Inscrever</button>
     </form>
+    <div id="adminSection">
+        <h2>Admin</h2>
+        <label for="adminPassword">Senha do Administrador:</label>
+        <input type="password" id="adminPassword">
+        <button id="viewParticipantsBtn">Ver Participantes</button>
+    </div>
 
+    <div id="participantList" class="hide">
+        <h3>Lista de Inscritos</h3>
+        <div id="participants"></div>
+    </div>
+
+   
     <script>
         const form = document.getElementById('registrationForm');
-        let registrations = JSON.parse(localStorage.getItem('registrations')) || [];
+        const participantsDiv = document.getElementById('participants');
+        const participantList = document.getElementById('participantList');
+        const viewParticipantsBtn = document.getElementById('viewParticipantsBtn');
+        const adminPassword = document.getElementById('adminPassword');
+
+        const adminPasswordValue = "IRRUL"; // Senha do administrador
+        let registrations = [];
 
         form.addEventListener('submit', function(event) {
             event.preventDefault();
@@ -80,11 +173,35 @@
             };
 
             registrations.push(newRegistration);
-            localStorage.setItem('registrations', JSON.stringify(registrations));
-
             alert('Inscrição realizada com sucesso!');
             form.reset();
         });
+
+        viewParticipantsBtn.addEventListener('click', function() {
+            if (adminPassword.value === adminPasswordValue) {
+                participantList.classList.toggle('show');
+                participantList.classList.toggle('hide');
+                displayParticipants();
+            } else {
+                alert('Senha incorreta!');
+            }
+        });
+
+        function displayParticipants() {
+            participantsDiv.innerHTML = ''; // Limpa a lista antes de atualizar
+
+            registrations.forEach((registration, index) => {
+                const participant = document.createElement('div');
+                participant.classList.add('participant');
+                participant.innerHTML = `
+                    <strong>Inscrição ${index + 1}</strong><br>
+                    Nome: ${registration.name}<br>
+                    Celular: ${registration.phone}<br>
+                    Email: ${registration.email}
+                `;
+                participantsDiv.appendChild(participant);
+            });
+        }
     </script>
 
 </body>
